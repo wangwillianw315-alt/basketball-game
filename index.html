@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>蓄力投篮</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="mode-select" id="modeSelect" aria-label="选择游戏模式">
+        <div class="mode-title">
+          <span>第 1 关</span>
+          <h1>选择投篮方式</h1>
+        </div>
+        <div class="mode-options">
+          <button class="mode-card mode-card-classic" id="classicModeButton" type="button">
+            <span class="mode-side">左边</span>
+            <strong>直接投篮</strong>
+            <small>竖屏拖拽，仰视 3D 篮筐</small>
+          </button>
+          <button class="mode-card mode-card-sling" id="slingModeButton" type="button">
+            <span class="mode-side">右边</span>
+            <strong>3D 投篮</strong>
+            <small>横屏弹弓，像愤怒的小鸟一样</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="game classic-game hidden" id="classicGame" aria-label="直接投篮小游戏">
+        <button class="back-button" id="classicBackButton" type="button">返回</button>
+        <section class="scoreboard" aria-label="比赛数据">
+          <div class="level-badge" aria-label="当前关卡">第 1 关</div>
+          <div class="stat">
+            <span class="stat-label">得分</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat timer">
+            <span class="stat-label">时间</span>
+            <strong><span id="timeLeft">30</span>s</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">连中</span>
+            <strong id="bestStreak">0</strong>
+          </div>
+        </section>
+
+        <section class="court" id="court" aria-label="球场">
+          <div class="level-goal" id="levelGoal">目标：30 秒拿到 20 分</div>
+          <div class="shot-feedback" id="shotFeedback" aria-live="polite">按住篮球</div>
+          <div class="streak-banner" id="streakBanner" aria-hidden="true">HOT STREAK</div>
+          <div class="hoop" id="hoop">
+            <div class="sweet-spot" aria-hidden="true"></div>
+            <div class="backboard-shadow"></div>
+            <div class="board-arm board-arm-left"></div>
+            <div class="board-arm board-arm-right"></div>
+            <div class="backboard">
+              <div class="board-depth board-depth-right"></div>
+              <div class="board-depth board-depth-bottom"></div>
+              <div class="glass-shine"></div>
+              <div class="target-square"></div>
+            </div>
+            <div class="score-burst" id="scoreBurst" aria-hidden="true">SWISH +2</div>
+            <div class="rim-wrap">
+              <div class="rim-back"></div>
+              <div class="rim"></div>
+              <div class="rim-front"></div>
+              <div class="rim-depth"></div>
+            </div>
+            <div class="net">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+
+          <div class="ghost-ball" id="ghostBall"></div>
+          <div class="aim-arc" id="aimArc" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="power-panel" aria-label="投篮力度">
+            <div class="power-track"><div class="power-fill" id="powerFill"></div></div>
+            <span>力度</span>
+          </div>
+          <div class="power-coach" id="powerCoach">按住后向下拉</div>
+
+          <div class="hands" id="classicHands" aria-hidden="true">
+            <div class="hand hand-left"></div>
+            <div class="hand hand-right"></div>
+          </div>
+          <button class="ball" id="shootButton" type="button" aria-label="按住并拖拽篮球投篮">
+            <span class="ball-lines"></span>
+          </button>
+        </section>
+
+        <section class="controls" aria-label="游戏控制">
+          <button class="primary-action" id="startButton" type="button">开始游戏</button>
+          <p class="hint">按住篮球向后拖，左右控制方向，松手投篮。</p>
+        </section>
+      </section>
+
+      <section class="sling-game hidden" id="slingGame" aria-label="3D 横屏投篮小游戏">
+        <div class="rotate-notice" id="rotateNotice">
+          <strong>请横屏游玩</strong>
+          <span>右边 3D 投篮需要更宽的视野。</span>
+        </div>
+        <div class="sling-hud">
+          <button class="back-button sling-back" id="slingBackButton" type="button">返回</button>
+          <div class="level-badge">第 1 关</div>
+          <div class="stat">
+            <span class="stat-label">得分</span>
+            <strong id="slingScore">0</strong>
+          </div>
+          <div class="stat timer">
+            <span class="stat-label">时间</span>
+            <strong><span id="slingTimeLeft">30</span>s</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">连中</span>
+            <strong id="slingBestStreak">0</strong>
+          </div>
+        </div>
+
+        <section class="sling-court" id="slingCourt">
+          <div class="sling-goal">目标：30 秒拿到 20 分</div>
+          <div class="sling-feedback" id="slingFeedback" aria-live="polite">拉住篮球</div>
+          <div class="sling-streak-banner" id="slingStreakBanner">HOT STREAK</div>
+          <div class="sling-arc" id="slingArc" aria-hidden="true">
+            <svg class="sling-arc-line" viewBox="0 -260 760 440" preserveAspectRatio="none">
+              <path id="slingArcPath"></path>
+            </svg>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="sling-pad">
+            <div class="sling-band sling-band-top"></div>
+            <div class="sling-band sling-band-bottom"></div>
+          </div>
+          <div class="sling-player" id="slingPlayer" aria-hidden="true">
+            <div class="player-head"></div>
+            <div class="player-body"></div>
+            <div class="player-arm player-arm-front"></div>
+            <div class="player-arm player-arm-back"></div>
+            <div class="player-leg player-leg-left"></div>
+            <div class="player-leg player-leg-right"></div>
+          </div>
+          <button class="sling-ball" id="slingBall" type="button" aria-label="拖拽篮球弹射投篮">
+            <span class="ball-lines"></span>
+          </button>
+          <div class="sling-hoop" id="slingHoop">
+            <div class="sling-sweet-spot"></div>
+            <div class="sling-board">
+              <div class="sling-board-shine"></div>
+              <div class="sling-target"></div>
+            </div>
+            <div class="sling-rim-line" id="slingRimLine"></div>
+            <div class="sling-rim" aria-hidden="true"></div>
+            <div class="sling-net">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="sling-score-burst" id="slingScoreBurst">SWISH +2</div>
+          </div>
+          <div class="sling-power" id="slingPower">向左后方拉</div>
+        </section>
+      </section>
+    </main>
+
+    <div class="modal hidden" id="gameOver" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+      <div class="modal-panel">
+        <h1 id="gameOverTitle">本局结束</h1>
+        <p class="result-label" id="resultLabel">再挑战</p>
+        <p class="final-score">得分 <strong id="finalScore">0</strong></p>
+        <p class="final-streak">最佳连中 <strong id="finalStreak">0</strong></p>
+        <button class="primary-action" id="restartButton" type="button">再来一局</button>
+      </div>
+    </div>
+
+    <script src="shotRules.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
