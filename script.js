@@ -625,7 +625,6 @@ function handleSlingPointerRelease(event) {
 function updateSlingAimingUi() {
   const normalized = rules.normalizeSlingDrag({ dragX: sling.state.dragX, dragY: sling.state.dragY });
   const powerPercent = Math.round(normalized.pull * 100);
-  const dots = Array.from(sling.arcEl.querySelectorAll("span"));
   const pathPoints = [];
 
   sling.courtEl.classList.add("is-dragging");
@@ -646,14 +645,6 @@ function updateSlingAimingUi() {
 
   sling.arcPathEl.setAttribute("d", pathPoints.join(" "));
 
-  dots.forEach((dot, index) => {
-    const t = (index + 1) / (dots.length + 1);
-    const point = rules.calculateSlingPoint({ dragX: sling.state.dragX, dragY: sling.state.dragY }, geometry, t);
-    const scale = 1.18 - index * 0.07;
-    const alpha = 0.95 - index * 0.07;
-    dot.style.transform = `translate(${point.x}px, ${point.y}px) scale(${scale})`;
-    dot.style.opacity = String(alpha);
-  });
   setSlingFeedback(`蓄力 ${powerPercent}%`);
   updateSlingPowerCoach({ dragX: sling.state.dragX, dragY: sling.state.dragY }, geometry);
 }

@@ -1766,27 +1766,6 @@ button {
   opacity: 1;
 }
 
-.sling-arc span {
-  position: absolute;
-  width: var(--dot);
-  height: var(--dot);
-  transform: translate(var(--x), calc(var(--y) + var(--arc-lift, 0px))) scale(var(--scale));
-  border-radius: 50%;
-  background: rgba(255, 255, 255, var(--alpha));
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.72),
-    0 0 18px rgba(83, 255, 173, 0.52);
-}
-
-.sling-arc span:nth-child(1) { --x: 0px; --y: 130px; --dot: 13px; --scale: 1.28; --alpha: 0.94; }
-.sling-arc span:nth-child(2) { --x: 76px; --y: 72px; --dot: 12px; --scale: 1.16; --alpha: 0.88; }
-.sling-arc span:nth-child(3) { --x: 156px; --y: 28px; --dot: 11px; --scale: 1.02; --alpha: 0.8; }
-.sling-arc span:nth-child(4) { --x: 240px; --y: 10px; --dot: 10px; --scale: 0.9; --alpha: 0.7; }
-.sling-arc span:nth-child(5) { --x: 324px; --y: 28px; --dot: 9px; --scale: 0.8; --alpha: 0.62; }
-.sling-arc span:nth-child(6) { --x: 402px; --y: 70px; --dot: 8px; --scale: 0.72; --alpha: 0.52; }
-.sling-arc span:nth-child(7) { --x: 476px; --y: 124px; --dot: 7px; --scale: 0.64; --alpha: 0.44; }
-.sling-arc span:nth-child(8) { --x: 540px; --y: 166px; --dot: 7px; --scale: 0.58; --alpha: 0.34; }
-
 .sling-hoop {
   position: absolute;
   right: 58px;

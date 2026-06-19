@@ -168,7 +168,10 @@ async function assertSlingArcStartsAtVisibleBall() {
       return {
         dx: Math.abs(screenPoint.x - ballCenter.x),
         dy: Math.abs(screenPoint.y - ballCenter.y),
-        ballLeftGap: ballRect.left - courtRect.left
+        ballLeftGap: ballRect.left - courtRect.left,
+        dotCount: document.querySelectorAll("#slingArc span").length,
+        pathCount: document.querySelectorAll("#slingArc path").length,
+        pathLength: document.querySelector("#slingArcPath").getTotalLength()
       };
     });
 
@@ -184,6 +187,9 @@ async function assertSlingArcStartsAtVisibleBall() {
     assert.ok(setShot.dx < 8, `set-shot arc should start at ball center x, got ${setShot.dx}`);
     assert.ok(setShot.dy < 8, `set-shot arc should start at ball center y, got ${setShot.dy}`);
     assert.ok(setShot.ballLeftGap >= 0, `set-shot ball should stay inside the court, got ${setShot.ballLeftGap}`);
+    assert.equal(setShot.pathCount, 1);
+    assert.equal(setShot.dotCount, 0);
+    assert.ok(setShot.pathLength > 160, "set-shot should keep one visible trajectory line");
   });
 
   await withPage({ width: 740, height: 360 }, async (page) => {
@@ -201,6 +207,9 @@ async function assertSlingArcStartsAtVisibleBall() {
     assert.ok(layup.dx < 8, `layup arc should start at ball center x, got ${layup.dx}`);
     assert.ok(layup.dy < 8, `layup arc should start at ball center y, got ${layup.dy}`);
     assert.ok(layup.ballLeftGap >= 0, `layup ball should stay inside the court, got ${layup.ballLeftGap}`);
+    assert.equal(layup.pathCount, 1);
+    assert.equal(layup.dotCount, 0);
+    assert.ok(layup.pathLength > 160, "layup should keep one visible trajectory line");
   });
 }
 
