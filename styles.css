@@ -1356,36 +1356,70 @@ button {
 
 .layup-controls {
   position: absolute;
-  left: 50%;
-  bottom: 42px;
-  z-index: 10;
+  left: 18px;
+  bottom: 18px;
+  z-index: 12;
   display: none;
-  gap: 14px;
-  transform: translateX(-50%);
+  width: 112px;
+  height: 112px;
 }
 
 .layup-controls.visible {
-  display: flex;
+  display: block;
 }
 
-.layup-move-button {
-  display: grid;
-  place-items: center;
-  width: 62px;
-  height: 62px;
-  border: 3px solid rgba(255, 255, 255, 0.68);
+.layup-joystick {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(255, 255, 255, 0.72);
   border-radius: 50%;
   background: rgba(20, 63, 107, 0.92);
-  color: #ffffff;
-  font-size: 44px;
-  line-height: 1;
-  font-weight: 900;
-  box-shadow: 0 10px 18px rgba(23, 32, 42, 0.2);
+  box-shadow: 0 12px 22px rgba(23, 32, 42, 0.22), inset 0 0 0 12px rgba(255, 255, 255, 0.08);
   touch-action: none;
 }
 
-.layup-move-button:active {
-  transform: translateY(2px);
+.joystick-ring {
+  position: absolute;
+  inset: 23px;
+  border: 2px solid rgba(255, 255, 255, 0.36);
+  border-radius: 50%;
+}
+
+.joystick-ring::before,
+.joystick-ring::after {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.joystick-ring::before {
+  left: 50%;
+  top: -14px;
+  width: 2px;
+  height: calc(100% + 28px);
+  transform: translateX(-50%);
+}
+
+.joystick-ring::after {
+  left: -14px;
+  top: 50%;
+  width: calc(100% + 28px);
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.joystick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(255, 255, 255, 0.82);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f8fbff, #bfd8e7);
+  box-shadow: 0 8px 15px rgba(23, 32, 42, 0.26);
 }
 
 .sling-streak-banner {
@@ -1499,6 +1533,29 @@ button {
 
 .sling-court.layup-mode .sling-pad {
   display: none;
+}
+
+.sling-court.layup-mode .sling-hoop {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  transform-origin: top center;
+}
+
+.sling-court.layup-mode .sling-feedback {
+  top: 12px;
+  left: auto;
+  right: 14px;
+  min-width: 106px;
+  transform: none;
+}
+
+.sling-court.layup-mode .sling-power {
+  left: auto;
+  right: 14px;
+  bottom: 18px;
+  max-width: 168px;
+  transform: none;
 }
 
 .sling-court.layup-mode.dribbling .sling-ball {
@@ -2029,14 +2086,19 @@ button {
   .sling-court.layup-mode .sling-ball { left: 86px; }
 
   .layup-controls {
-    bottom: 32px;
-    gap: 10px;
+    left: 12px;
+    bottom: 12px;
+    width: 90px;
+    height: 90px;
   }
 
-  .layup-move-button {
-    width: 48px;
-    height: 48px;
-    font-size: 34px;
+  .joystick-ring {
+    inset: 19px;
+  }
+
+  .joystick-knob {
+    width: 42px;
+    height: 42px;
   }
 
   .sling-arc {
@@ -2056,6 +2118,11 @@ button {
     right: 24px;
     transform: scale(0.86);
     transform-origin: top right;
+  }
+
+  .sling-court.layup-mode .sling-hoop {
+    transform: translateX(-50%) scale(0.86);
+    transform-origin: top center;
   }
 
   .sling-court.moving-hoop .sling-hoop {
@@ -2123,6 +2190,11 @@ button {
     transform: scale(0.76);
   }
 
+  .sling-court.layup-mode .sling-hoop {
+    transform: translateX(-50%) scale(0.76);
+    transform-origin: top center;
+  }
+
   .sling-player {
     left: 58px;
     bottom: 34px;
@@ -2149,7 +2221,18 @@ button {
   .sling-court.layup-mode .sling-ball { left: 80px; }
 
   .layup-controls {
-    bottom: 26px;
+    bottom: 10px;
+    width: 78px;
+    height: 78px;
+  }
+
+  .joystick-ring {
+    inset: 17px;
+  }
+
+  .joystick-knob {
+    width: 36px;
+    height: 36px;
   }
 
   .sling-arc {
@@ -2235,6 +2318,36 @@ button {
     height: calc(100dvh - 75px);
     min-height: 0;
     border-width: 2px;
+  }
+
+  .layup-controls {
+    left: 12px;
+    bottom: 12px;
+    width: 88px;
+    height: 88px;
+  }
+
+  .joystick-ring {
+    inset: 18px;
+  }
+
+  .joystick-knob {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sling-court.layup-mode .sling-feedback {
+    top: 10px;
+    right: 10px;
+    max-width: 126px;
+    font-size: 11px;
+  }
+
+  .sling-court.layup-mode .sling-power {
+    right: 10px;
+    bottom: 12px;
+    max-width: 148px;
+    font-size: 11px;
   }
 }
 
