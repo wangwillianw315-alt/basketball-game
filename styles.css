@@ -1298,8 +1298,9 @@ button {
 }
 
 .sling-power {
-  left: 70px;
-  bottom: 132px;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.9);
   color: #143f6b;
   font-size: 13px;
@@ -1844,8 +1845,7 @@ button {
   }
 
   .sling-power {
-    left: 54px;
-    bottom: 98px;
+    bottom: 10px;
   }
 
   .sling-pad {
@@ -1969,8 +1969,7 @@ button {
   }
 
   .sling-power {
-    left: 48px;
-    bottom: 82px;
+    bottom: 8px;
   }
 }
 
