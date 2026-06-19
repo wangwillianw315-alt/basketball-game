@@ -1535,11 +1535,82 @@ button {
   display: none;
 }
 
+.sling-court.layup-mode {
+  background:
+    radial-gradient(ellipse at 50% 92%, transparent 0 112px, rgba(255,255,255,0.48) 114px 119px, transparent 121px),
+    radial-gradient(ellipse at 50% 108%, transparent 0 216px, rgba(255,255,255,0.32) 218px 224px, transparent 226px),
+    linear-gradient(90deg, transparent 0 calc(50% - 2px), rgba(255,255,255,0.22) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 2px)),
+    linear-gradient(180deg, rgba(126, 200, 227, 0.28) 0 15%, transparent 15.2%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(180deg, #eaa45b, #d7863e);
+  background-size: auto, auto, auto, auto, 76px 100%, auto;
+}
+
 .sling-court.layup-mode .sling-hoop {
   left: 50%;
   right: auto;
+  top: 24px;
   transform: translateX(-50%);
   transform-origin: top center;
+  width: 190px;
+  height: 210px;
+}
+
+.sling-court.layup-mode .sling-board {
+  left: 50%;
+  right: auto;
+  width: 96px;
+  height: 136px;
+  transform: translateX(-50%);
+  box-shadow:
+    0 14px 0 rgba(23, 32, 42, 0.12),
+    inset 0 -12px 18px rgba(20, 63, 107, 0.1);
+}
+
+.sling-court.layup-mode .sling-rim-line {
+  left: 50%;
+  right: auto;
+  top: 108px;
+  width: 128px;
+  transform: translateX(-50%);
+}
+
+.sling-court.layup-mode .sling-rim {
+  left: 50%;
+  right: auto;
+  top: 102px;
+  width: 142px;
+  transform: translateX(-50%);
+}
+
+.sling-court.layup-mode .sling-sweet-spot {
+  left: 50%;
+  right: auto;
+  top: 104px;
+  width: 132px;
+  transform: translateX(-50%);
+}
+
+.sling-court.layup-mode .sling-net {
+  left: 50%;
+  right: auto;
+  top: 120px;
+  transform: translateX(-50%);
+}
+
+.sling-court.layup-mode .player-head::before,
+.sling-court.layup-mode .player-head::after {
+  display: none;
+}
+
+.sling-court.layup-mode .player-head {
+  background:
+    radial-gradient(circle at 50% 12px, rgba(58, 36, 24, 0.36) 0 18px, transparent 19px),
+    linear-gradient(180deg, #e89b66, #ffd2a6);
+}
+
+.sling-court.layup-mode .player-body {
+  background: linear-gradient(180deg, #144f69, #1f6f8b 58%, #143f6b);
 }
 
 .sling-court.layup-mode .sling-feedback {
@@ -1556,10 +1627,6 @@ button {
   bottom: 18px;
   max-width: 168px;
   transform: none;
-}
-
-.sling-court.layup-mode.dribbling .sling-ball {
-  animation: dribbleBounce 360ms ease-in-out infinite;
 }
 
 .sling-court.layup-mode.dribbling .player-leg-left {

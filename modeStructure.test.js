@@ -110,6 +110,7 @@ async function assertLayupModeUsesJoystickAndCenteredHoop() {
     await page.waitForTimeout(250);
 
     const before = await page.locator("#slingPlayer").boundingBox();
+    const ballBefore = await page.locator("#slingBall").boundingBox();
     const joystick = page.locator("#layupJoystick");
     assert.equal(await joystick.count(), 1);
     const joystickBox = await joystick.boundingBox();
@@ -121,17 +122,23 @@ async function assertLayupModeUsesJoystickAndCenteredHoop() {
     await page.mouse.up();
 
     const after = await page.locator("#slingPlayer").boundingBox();
+    const ballAfter = await page.locator("#slingBall").boundingBox();
     const state = await page.evaluate(() => ({
       mode: document.querySelector("#slingGame").dataset.mode,
       level: document.querySelector("#slingLevelBadge").textContent.trim(),
       layupClass: document.querySelector("#slingCourt").classList.contains("layup-mode"),
       movingHoop: document.querySelector("#slingCourt").classList.contains("moving-hoop"),
       joystickVisible: getComputedStyle(document.querySelector("#layupControls")).display !== "none",
+      ballAnimation: getComputedStyle(document.querySelector("#slingBall")).animationName,
       court: document.querySelector("#slingCourt").getBoundingClientRect().toJSON(),
-      hoop: document.querySelector("#slingHoop").getBoundingClientRect().toJSON()
+      hoop: document.querySelector("#slingHoop").getBoundingClientRect().toJSON(),
+      board: document.querySelector(".sling-board").getBoundingClientRect().toJSON(),
+      rim: document.querySelector("#slingRimLine").getBoundingClientRect().toJSON()
     }));
     const courtCenterX = state.court.left + state.court.width / 2;
     const hoopCenterX = state.hoop.left + state.hoop.width / 2;
+    const boardCenterX = state.board.left + state.board.width / 2;
+    const rimCenterX = state.rim.left + state.rim.width / 2;
 
     assert.equal(state.mode, "layup");
     assert.equal(state.level, "移动上篮");
@@ -139,8 +146,12 @@ async function assertLayupModeUsesJoystickAndCenteredHoop() {
     assert.equal(state.movingHoop, false);
     assert.equal(state.joystickVisible, true);
     assert.ok(after.x > before.x + 8, "right control should move the player");
-    assert.ok(after.y < before.y - 8, "up control should move the player forward");
-    assert.ok(Math.abs(hoopCenterX - courtCenterX) < 40, "layup hoop should sit near the court center");
+    assert.ok(Math.abs(after.y - before.y) < 3, "layup player should only move left and right");
+    assert.ok(Math.abs(ballAfter.y - ballBefore.y) < 3, "held ball should not bob vertically while moving");
+    assert.equal(state.ballAnimation, "none");
+    assert.ok(Math.abs(hoopCenterX - courtCenterX) < 24, "layup hoop should sit near the court center");
+    assert.ok(state.hoop.top - state.court.top < 62, "layup hoop should sit high on the court");
+    assert.ok(Math.abs(boardCenterX - rimCenterX) < 10, "layup rim should face the player from the center of the board");
   });
 }
 

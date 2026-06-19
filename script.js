@@ -345,7 +345,7 @@ function setClassicBallTransform(x, y, scale = 1) {
 
 function setSlingBallTransform(x, y, scale = 1) {
   const layupX = currentMode === "layup" ? sling.state.layupX : 0;
-  const layupY = currentMode === "layup" ? sling.state.layupY : 0;
+  const layupY = 0;
   sling.ballEl.style.transform = `translate(${layupX + x}px, ${layupY + y}px) scale(${scale})`;
   sling.playerEl.style.transform = `translate(${layupX + x * 0.42}px, ${layupY + y * 0.32}px)`;
 }
@@ -407,7 +407,7 @@ function moveLayupPlayer() {
     return;
   }
 
-  const magnitude = Math.hypot(sling.layupVectorX, sling.layupVectorY);
+  const magnitude = Math.abs(sling.layupVectorX);
   if (magnitude < JOYSTICK_DEAD_ZONE) {
     sling.courtEl.classList.remove("dribbling");
     return;
@@ -418,7 +418,7 @@ function moveLayupPlayer() {
   }
 
   sling.state.layupX = clamp(sling.state.layupX + sling.layupVectorX * LAYUP_STEP, LAYUP_MIN_X, LAYUP_MAX_X);
-  sling.state.layupY = clamp(sling.state.layupY + sling.layupVectorY * LAYUP_STEP, LAYUP_MIN_Y, LAYUP_MAX_Y);
+  sling.state.layupY = 0;
   sling.courtEl.classList.add("dribbling");
   setSlingBallTransform(sling.state.dragX, sling.state.dragY, sling.state.isDragging ? 1.08 : 1);
 }
@@ -454,11 +454,11 @@ function updateLayupJoystick(event) {
   const distance = Math.hypot(rawX, rawY);
   const limit = distance > JOYSTICK_RADIUS ? JOYSTICK_RADIUS / distance : 1;
   const knobX = rawX * limit;
-  const knobY = rawY * limit;
-  const magnitude = Math.hypot(knobX, knobY) / JOYSTICK_RADIUS;
+  const knobY = 0;
+  const magnitude = Math.abs(knobX) / JOYSTICK_RADIUS;
 
   sling.layupVectorX = magnitude < JOYSTICK_DEAD_ZONE ? 0 : knobX / JOYSTICK_RADIUS;
-  sling.layupVectorY = magnitude < JOYSTICK_DEAD_ZONE ? 0 : knobY / JOYSTICK_RADIUS;
+  sling.layupVectorY = 0;
   sling.layupJoystickKnobEl.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
 }
 
