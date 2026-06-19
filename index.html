@@ -17,13 +17,13 @@
         <div class="mode-options">
           <button class="mode-card mode-card-classic" id="classicModeButton" type="button">
             <span class="mode-side">左边</span>
-            <strong>直接投篮</strong>
-            <small>竖屏拖拽，仰视 3D 篮筐</small>
+            <strong>第 1 关</strong>
+            <small>第一章：固定篮筐基础投篮</small>
           </button>
           <button class="mode-card mode-card-sling" id="slingModeButton" type="button">
             <span class="mode-side">右边</span>
-            <strong>3D 投篮</strong>
-            <small>横屏弹弓，像愤怒的小鸟一样</small>
+            <strong>第 2 关</strong>
+            <small>第一章：移动篮筐预判投篮</small>
           </button>
         </div>
       </section>
@@ -32,7 +32,10 @@
         <button class="back-button" id="classicBackButton" type="button">返回</button>
         <div class="level-intro" id="classicLevelIntro" data-state="idle" aria-hidden="true">第 1 关</div>
         <section class="scoreboard" aria-label="比赛数据">
-          <div class="level-badge" id="classicLevelBadge" aria-label="当前关卡">第 1 关</div>
+          <div class="stage-badge" aria-label="当前章节和关卡">
+            <div class="chapter-badge" id="classicChapterBadge">第一章</div>
+            <div class="level-badge" id="classicLevelBadge">第 1 关</div>
+          </div>
           <div class="stat">
             <span class="stat-label">得分</span>
             <strong id="score">0</strong>
@@ -117,7 +120,10 @@
         <div class="level-intro" id="slingLevelIntro" data-state="idle" aria-hidden="true">第 1 关</div>
         <div class="sling-hud">
           <button class="back-button sling-back" id="slingBackButton" type="button">返回</button>
-          <div class="level-badge" id="slingLevelBadge">第 1 关</div>
+          <div class="stage-badge" aria-label="当前章节和关卡">
+            <div class="chapter-badge" id="slingChapterBadge">第一章</div>
+            <div class="level-badge" id="slingLevelBadge">第 2 关</div>
+          </div>
           <div class="stat">
             <span class="stat-label">得分</span>
             <strong id="slingScore">0</strong>
