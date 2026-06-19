@@ -5,6 +5,10 @@ const MIN_DRAG_TO_SHOOT = 18;
 const HOOP_FEEDBACK_MS = 520;
 const LEVEL_INTRO_HOLD_MS = 820;
 const LEVEL_INTRO_MOVE_MS = 430;
+const SET_SHOT_DISTANCES = ["近距离", "中距离", "远距离"];
+const LAYUP_MIN_X = -44;
+const LAYUP_MAX_X = 250;
+const LAYUP_STEP = 16;
 
 const rules = window.shotRules;
 let audioContext = null;
@@ -14,7 +18,8 @@ const modeSelectEl = document.querySelector("#modeSelect");
 const classicGameEl = document.querySelector("#classicGame");
 const slingGameEl = document.querySelector("#slingGame");
 const classicModeButton = document.querySelector("#classicModeButton");
-const slingModeButton = document.querySelector("#slingModeButton");
+const setShotModeButton = document.querySelector("#setShotModeButton");
+const layupModeButton = document.querySelector("#layupModeButton");
 const classicBackButton = document.querySelector("#classicBackButton");
 const slingBackButton = document.querySelector("#slingBackButton");
 
@@ -41,7 +46,8 @@ const classic = {
   aimArcEl: document.querySelector("#aimArc"),
   powerFillEl: document.querySelector("#powerFill"),
   powerCoachEl: document.querySelector("#powerCoach"),
-  handsEl: document.querySelector("#classicHands")
+  handsEl: document.querySelector("#classicHands"),
+  modeLabel: "投球练习"
 };
 
 const sling = {
@@ -62,7 +68,12 @@ const sling = {
   netEl: document.querySelector(".sling-net"),
   arcEl: document.querySelector("#slingArc"),
   arcPathEl: document.querySelector("#slingArcPath"),
-  powerEl: document.querySelector("#slingPower")
+  powerEl: document.querySelector("#slingPower"),
+  layupControlsEl: document.querySelector("#layupControls"),
+  layupLeftButton: document.querySelector("#layupLeftButton"),
+  layupRightButton: document.querySelector("#layupRightButton"),
+  layupMoveTimerId: null,
+  modeLabel: "定点投球"
 };
 
 function createRoundState() {
@@ -75,6 +86,8 @@ function createRoundState() {
     isDragging: false,
     isShooting: false,
     timerId: null,
+    distanceIndex: 1,
+    layupX: 0,
     startX: 0,
     startY: 0,
     dragX: 0,
@@ -88,31 +101,48 @@ function showMode(mode) {
   currentMode = mode;
   modeSelectEl.classList.toggle("hidden", mode !== "menu");
   classicGameEl.classList.toggle("hidden", mode !== "classic");
-  slingGameEl.classList.toggle("hidden", mode !== "sling");
+  slingGameEl.classList.toggle("hidden", mode !== "set-shot" && mode !== "layup");
+  slingGameEl.dataset.mode = mode;
   gameOverEl.classList.add("hidden");
 
   if (mode === "classic") {
     resetIdleState(classic.state);
     resetClassicUi();
+    classic.courtEl.classList.add("moving-hoop");
     classic.startButton.textContent = "开始游戏";
     setClassicFeedback("按住篮球");
     updateClassicScoreboard();
-    playLevelIntro(classic, "第一章", "第 1 关");
+    playLevelIntro(classic, "第一章", "投球练习");
   }
 
-  if (mode === "sling") {
+  if (mode === "set-shot") {
     resetIdleState(sling.state);
+    sling.state.distanceIndex = 1;
+    sling.state.layupX = 0;
+    sling.modeLabel = "定点投球";
     resetSlingUi();
-    sling.courtEl.classList.add("moving-hoop");
-    setSlingFeedback("拉住篮球");
+    setSlingFeedback("中距离：拉住篮球");
     updateSlingScoreboard();
-    playLevelIntro(sling, "第一章", "第 2 关");
+    playLevelIntro(sling, "第一章", "定点投球");
+  }
+
+  if (mode === "layup") {
+    resetIdleState(sling.state);
+    sling.state.distanceIndex = 1;
+    sling.state.layupX = 0;
+    sling.modeLabel = "移动上篮";
+    resetSlingUi();
+    setSlingFeedback("左右移动，随时投球");
+    updateSlingScoreboard();
+    playLevelIntro(sling, "第一章", "移动上篮");
   }
 }
 
 function stopRound(game) {
   resetLevelIntro(game);
   window.clearInterval(game.state.timerId);
+  window.clearInterval(game.layupMoveTimerId);
+  game.layupMoveTimerId = null;
   game.state.timerId = null;
   game.state.isPlaying = false;
   game.state.isDragging = false;
@@ -124,6 +154,8 @@ function resetIdleState(state) {
   state.timeLeft = ROUND_SECONDS;
   state.currentStreak = 0;
   state.bestStreak = 0;
+  state.distanceIndex = 1;
+  state.layupX = 0;
   state.startX = 0;
   state.startY = 0;
   state.dragX = 0;
@@ -204,9 +236,12 @@ function startClassicRound() {
 function startSlingRound() {
   prepareAudio();
   resetState(sling.state);
+  if (currentMode === "set-shot") {
+    sling.state.distanceIndex = 1;
+  }
   sling.state.timerId = window.setInterval(() => tickRound(sling, endSlingRound), 1000);
   resetSlingUi();
-  setSlingFeedback("拉住篮球");
+  setSlingFeedback(currentMode === "layup" ? "左右移动，随时投球" : "中距离：拉住篮球");
   updateSlingScoreboard();
 }
 
@@ -295,8 +330,9 @@ function setClassicBallTransform(x, y, scale = 1) {
 }
 
 function setSlingBallTransform(x, y, scale = 1) {
-  sling.ballEl.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-  sling.playerEl.style.transform = `translate(${x * 0.42}px, ${y * 0.32}px)`;
+  const layupX = currentMode === "layup" ? sling.state.layupX : 0;
+  sling.ballEl.style.transform = `translate(${layupX + x}px, ${y}px) scale(${scale})`;
+  sling.playerEl.style.transform = `translate(${layupX + x * 0.42}px, ${y * 0.32}px)`;
 }
 
 function resetClassicUi() {
@@ -310,13 +346,68 @@ function resetClassicUi() {
 }
 
 function resetSlingUi() {
-  sling.courtEl.classList.remove("is-dragging");
+  sling.courtEl.classList.remove(
+    "is-dragging",
+    "moving-hoop",
+    "layup-mode",
+    "distance-near",
+    "distance-mid",
+    "distance-far"
+  );
   sling.ballEl.style.transition = "transform 220ms ease, opacity 180ms ease";
   setSlingBallTransform(0, 0, 1);
   sling.arcEl.style.removeProperty("--arc-lift");
   sling.arcEl.style.transform = "none";
   sling.arcPathEl.setAttribute("d", "");
-  setPowerCoach(sling.powerEl, "向左后方拉", "");
+  applySlingModeLayout();
+  setPowerCoach(sling.powerEl, currentMode === "layup" ? "左右移动后拉球" : `${getSetShotDistanceLabel()}：向左后方拉`, "");
+}
+
+function getSetShotDistanceLabel() {
+  return SET_SHOT_DISTANCES[sling.state.distanceIndex] || "中距离";
+}
+
+function applySlingModeLayout() {
+  slingGameEl.dataset.mode = currentMode;
+  sling.levelBadgeEl.textContent = currentMode === "layup" ? "移动上篮" : "定点投球";
+  sling.courtEl.dataset.distance = currentMode === "set-shot" ? getSetShotDistanceLabel() : "";
+  sling.layupControlsEl.classList.toggle("visible", currentMode === "layup");
+
+  if (currentMode === "set-shot") {
+    const className = ["distance-near", "distance-mid", "distance-far"][sling.state.distanceIndex] || "distance-mid";
+    sling.courtEl.classList.add(className);
+    return;
+  }
+
+  if (currentMode === "layup") {
+    sling.courtEl.classList.add("layup-mode");
+  }
+}
+
+function moveLayupPlayer(direction) {
+  if (currentMode !== "layup" || sling.state.isShooting) {
+    return;
+  }
+
+  if (!sling.state.isPlaying) {
+    startSlingRound();
+  }
+
+  sling.state.layupX = clamp(sling.state.layupX + direction * LAYUP_STEP, LAYUP_MIN_X, LAYUP_MAX_X);
+  sling.courtEl.classList.toggle("dribbling", direction !== 0);
+  setSlingBallTransform(sling.state.dragX, sling.state.dragY, sling.state.isDragging ? 1.08 : 1);
+}
+
+function startLayupMove(direction) {
+  moveLayupPlayer(direction);
+  window.clearInterval(sling.layupMoveTimerId);
+  sling.layupMoveTimerId = window.setInterval(() => moveLayupPlayer(direction), 80);
+}
+
+function stopLayupMove() {
+  window.clearInterval(sling.layupMoveTimerId);
+  sling.layupMoveTimerId = null;
+  sling.courtEl.classList.remove("dribbling");
 }
 
 function handleClassicPointerDown(event) {
@@ -404,7 +495,7 @@ function shootClassicBall() {
 function handleSlingPointerDown(event) {
   prepareAudio();
 
-  if (sling.state.isShooting || sling.state.timeLeft <= 0 || currentMode !== "sling") {
+  if (sling.state.isShooting || sling.state.timeLeft <= 0 || (currentMode !== "set-shot" && currentMode !== "layup")) {
     return;
   }
 
@@ -559,6 +650,7 @@ function resolveShot(game, result, resetUi, setFeedback, updateScoreboard) {
 
     window.setTimeout(() => {
       game.state.isShooting = false;
+      advanceTrainingState(game);
       resetUi();
     }, 420);
   } else {
@@ -567,9 +659,18 @@ function resolveShot(game, result, resetUi, setFeedback, updateScoreboard) {
     setFeedback(getMissText(result.reason));
     triggerHoopFeedback(game, false);
     game.state.isShooting = false;
+    advanceTrainingState(game);
     resetUi();
     updateScoreboard();
   }
+}
+
+function advanceTrainingState(game) {
+  if (game !== sling || currentMode !== "set-shot") {
+    return;
+  }
+
+  sling.state.distanceIndex = (sling.state.distanceIndex + 1) % SET_SHOT_DISTANCES.length;
 }
 
 function triggerHoopFeedback(game, made) {
@@ -727,7 +828,8 @@ function clamp(value, min, max) {
 }
 
 classicModeButton.addEventListener("click", () => showMode("classic"));
-slingModeButton.addEventListener("click", () => showMode("sling"));
+setShotModeButton.addEventListener("click", () => showMode("set-shot"));
+layupModeButton.addEventListener("click", () => showMode("layup"));
 classicBackButton.addEventListener("click", () => showMode("menu"));
 slingBackButton.addEventListener("click", () => showMode("menu"));
 
@@ -742,10 +844,19 @@ sling.ballEl.addEventListener("pointermove", handleSlingPointerMove);
 sling.ballEl.addEventListener("pointerup", handleSlingPointerRelease);
 sling.ballEl.addEventListener("pointercancel", handleSlingPointerRelease);
 
+sling.layupLeftButton.addEventListener("pointerdown", () => startLayupMove(-1));
+sling.layupLeftButton.addEventListener("pointerup", stopLayupMove);
+sling.layupLeftButton.addEventListener("pointercancel", stopLayupMove);
+sling.layupLeftButton.addEventListener("pointerleave", stopLayupMove);
+sling.layupRightButton.addEventListener("pointerdown", () => startLayupMove(1));
+sling.layupRightButton.addEventListener("pointerup", stopLayupMove);
+sling.layupRightButton.addEventListener("pointercancel", stopLayupMove);
+sling.layupRightButton.addEventListener("pointerleave", stopLayupMove);
+
 restartButton.addEventListener("click", () => {
   gameOverEl.classList.add("hidden");
 
-  if (currentMode === "sling") {
+  if (currentMode === "set-shot" || currentMode === "layup") {
     startSlingRound();
   } else {
     startClassicRound();
