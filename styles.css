@@ -2052,38 +2052,38 @@ button {
   }
 
   .sling-pad {
-    left: 58px;
+    left: 90px;
     bottom: 46px;
     height: 124px;
   }
 
   .sling-player {
-    left: 64px;
+    left: 96px;
     bottom: 48px;
   }
 
   .sling-ball {
-    left: 96px;
+    left: 128px;
     bottom: 82px;
   }
 
-  .sling-court.distance-near .sling-pad { left: 118px; }
-  .sling-court.distance-near .sling-player { left: 124px; }
-  .sling-court.distance-near .sling-ball { left: 158px; }
-  .sling-court.distance-near .sling-arc { left: 188px; }
+  .sling-court.distance-near .sling-pad { left: 150px; }
+  .sling-court.distance-near .sling-player { left: 156px; }
+  .sling-court.distance-near .sling-ball { left: 190px; }
+  .sling-court.distance-near .sling-arc { left: 220px; }
 
-  .sling-court.distance-mid .sling-pad { left: 58px; }
-  .sling-court.distance-mid .sling-player { left: 64px; }
-  .sling-court.distance-mid .sling-ball { left: 96px; }
-  .sling-court.distance-mid .sling-arc { left: 128px; }
+  .sling-court.distance-mid .sling-pad { left: 90px; }
+  .sling-court.distance-mid .sling-player { left: 96px; }
+  .sling-court.distance-mid .sling-ball { left: 128px; }
+  .sling-court.distance-mid .sling-arc { left: 160px; }
 
-  .sling-court.distance-far .sling-pad { left: 20px; }
-  .sling-court.distance-far .sling-player { left: 26px; }
-  .sling-court.distance-far .sling-ball { left: 60px; }
-  .sling-court.distance-far .sling-arc { left: 94px; }
+  .sling-court.distance-far .sling-pad { left: 48px; }
+  .sling-court.distance-far .sling-player { left: 54px; }
+  .sling-court.distance-far .sling-ball { left: 88px; }
+  .sling-court.distance-far .sling-arc { left: 122px; }
 
-  .sling-court.layup-mode .sling-player { left: 54px; }
-  .sling-court.layup-mode .sling-ball { left: 86px; }
+  .sling-court.layup-mode .sling-player { left: 86px; }
+  .sling-court.layup-mode .sling-ball { left: 118px; }
 
   .layup-controls {
     left: 12px;
@@ -2196,29 +2196,29 @@ button {
   }
 
   .sling-player {
-    left: 58px;
+    left: 88px;
     bottom: 34px;
   }
 
   .sling-pad {
-    left: 52px;
+    left: 82px;
     bottom: 34px;
   }
 
   .sling-ball {
-    left: 88px;
+    left: 118px;
     bottom: 68px;
   }
 
-  .sling-court.distance-near .sling-player { left: 108px; }
-  .sling-court.distance-near .sling-ball { left: 140px; }
-  .sling-court.distance-mid .sling-player { left: 58px; }
-  .sling-court.distance-mid .sling-ball { left: 88px; }
-  .sling-court.distance-far .sling-player { left: 24px; }
-  .sling-court.distance-far .sling-ball { left: 56px; }
+  .sling-court.distance-near .sling-player { left: 138px; }
+  .sling-court.distance-near .sling-ball { left: 170px; }
+  .sling-court.distance-mid .sling-player { left: 88px; }
+  .sling-court.distance-mid .sling-ball { left: 118px; }
+  .sling-court.distance-far .sling-player { left: 54px; }
+  .sling-court.distance-far .sling-ball { left: 86px; }
 
-  .sling-court.layup-mode .sling-player { left: 48px; }
-  .sling-court.layup-mode .sling-ball { left: 80px; }
+  .sling-court.layup-mode .sling-player { left: 78px; }
+  .sling-court.layup-mode .sling-ball { left: 110px; }
 
   .layup-controls {
     bottom: 10px;

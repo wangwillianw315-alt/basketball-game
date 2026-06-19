@@ -373,6 +373,9 @@ function resetSlingUi() {
   setSlingBallTransform(0, 0, 1);
   sling.arcEl.style.removeProperty("--arc-lift");
   sling.arcEl.style.transform = "none";
+  sling.arcEl.style.removeProperty("left");
+  sling.arcEl.style.removeProperty("top");
+  sling.arcEl.style.removeProperty("bottom");
   sling.arcPathEl.setAttribute("d", "");
   applySlingModeLayout();
   setPowerCoach(sling.powerEl, currentMode === "layup" ? "摇杆移动，拖球投篮" : `${getSetShotDistanceLabel()}：向左后方拉`, "");
@@ -588,9 +591,18 @@ function handleSlingPointerMove(event) {
     return;
   }
 
-  sling.state.dragX = clamp(event.clientX - sling.state.startX, -rules.MAX_SLING_PULL, 40);
+  sling.state.dragX = clamp(event.clientX - sling.state.startX, getSlingMinDragX(), 40);
   sling.state.dragY = clamp(event.clientY - sling.state.startY, -rules.MAX_SLING_ARC, rules.MAX_SLING_ARC);
   updateSlingAimingUi();
+}
+
+function getSlingMinDragX() {
+  const courtRect = sling.courtEl.getBoundingClientRect();
+  const ballRect = sling.ballEl.getBoundingClientRect();
+  const baseLeft = ballRect.left - sling.state.dragX;
+  const courtPadding = 8;
+
+  return Math.max(-rules.MAX_SLING_PULL, courtRect.left + courtPadding - baseLeft);
 }
 
 function handleSlingPointerRelease(event) {
@@ -613,12 +625,13 @@ function handleSlingPointerRelease(event) {
 function updateSlingAimingUi() {
   const normalized = rules.normalizeSlingDrag({ dragX: sling.state.dragX, dragY: sling.state.dragY });
   const powerPercent = Math.round(normalized.pull * 100);
-  const geometry = getSlingGeometry();
   const dots = Array.from(sling.arcEl.querySelectorAll("span"));
   const pathPoints = [];
 
   sling.courtEl.classList.add("is-dragging");
   setSlingBallTransform(sling.state.dragX, sling.state.dragY, 1.08);
+  positionSlingArcAtBall();
+  const geometry = getSlingGeometry();
   sling.arcEl.style.transform = "none";
   sling.arcEl.style.removeProperty("--arc-lift");
 
@@ -683,7 +696,7 @@ function animateSlingTrajectory(input, geometry, result) {
       point = rules.calculateSlingPoint(input, geometry, progress);
     }
 
-    setSlingBallTransform(point.x, point.y, result.made ? 0.72 : 0.78);
+    setSlingBallTransform(input.dragX + point.x, input.dragY + point.y, result.made ? 0.72 : 0.78);
 
     if (progress < 1) {
       requestAnimationFrame(frame);
@@ -778,12 +791,38 @@ function updateSlingPowerCoach(input, geometry) {
   setPowerCoach(sling.powerEl, hint.text, hint.tone);
 }
 
+function positionSlingArcAtBall() {
+  const svg = sling.arcPathEl.ownerSVGElement;
+
+  if (!svg || !svg.getScreenCTM) {
+    return;
+  }
+
+  const matrix = svg.getScreenCTM();
+
+  if (!matrix) {
+    return;
+  }
+
+  const ballRect = sling.ballEl.getBoundingClientRect();
+  const point = svg.createSVGPoint();
+  point.x = 0;
+  point.y = 0;
+  const arcStart = point.matrixTransform(matrix);
+  const targetX = ballRect.left + ballRect.width / 2;
+  const targetY = ballRect.top + ballRect.height / 2;
+
+  sling.arcEl.style.left = `${sling.arcEl.offsetLeft + targetX - arcStart.x}px`;
+  sling.arcEl.style.top = `${sling.arcEl.offsetTop + targetY - arcStart.y}px`;
+  sling.arcEl.style.bottom = "auto";
+}
+
 function getSlingGeometry() {
   const ballRect = sling.ballEl.getBoundingClientRect();
   const rimRect = sling.rimLineEl.getBoundingClientRect();
   const netRect = sling.netEl.getBoundingClientRect();
-  const baseCenterX = ballRect.left + ballRect.width / 2 - sling.state.dragX;
-  const baseCenterY = ballRect.top + ballRect.height / 2 - sling.state.dragY;
+  const baseCenterX = ballRect.left + ballRect.width / 2;
+  const baseCenterY = ballRect.top + ballRect.height / 2;
 
   return {
     rimX: rimRect.left + rimRect.width / 2 - baseCenterX,

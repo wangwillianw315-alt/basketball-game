@@ -144,11 +144,72 @@ async function assertLayupModeUsesJoystickAndCenteredHoop() {
   });
 }
 
+async function assertSlingArcStartsAtVisibleBall() {
+  async function dragBallAndMeasure(page) {
+    const ball = await page.locator("#slingBall").boundingBox();
+    await page.mouse.move(ball.x + ball.width / 2, ball.y + ball.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(ball.x + ball.width / 2 - 110, ball.y + ball.height / 2 - 80, { steps: 4 });
+    await page.waitForTimeout(100);
+
+    const measurement = await page.evaluate(() => {
+      const ballRect = document.querySelector("#slingBall").getBoundingClientRect();
+      const courtRect = document.querySelector("#slingCourt").getBoundingClientRect();
+      const svg = document.querySelector("#slingArcPath").ownerSVGElement;
+      const point = svg.createSVGPoint();
+      point.x = 0;
+      point.y = 0;
+      const screenPoint = point.matrixTransform(svg.getScreenCTM());
+      const ballCenter = {
+        x: ballRect.left + ballRect.width / 2,
+        y: ballRect.top + ballRect.height / 2
+      };
+
+      return {
+        dx: Math.abs(screenPoint.x - ballCenter.x),
+        dy: Math.abs(screenPoint.y - ballCenter.y),
+        ballLeftGap: ballRect.left - courtRect.left
+      };
+    });
+
+    await page.mouse.up();
+    return measurement;
+  }
+
+  await withPage({ width: 740, height: 360 }, async (page) => {
+    await page.locator("#setShotModeButton").click();
+    await page.waitForTimeout(250);
+    const setShot = await dragBallAndMeasure(page);
+
+    assert.ok(setShot.dx < 8, `set-shot arc should start at ball center x, got ${setShot.dx}`);
+    assert.ok(setShot.dy < 8, `set-shot arc should start at ball center y, got ${setShot.dy}`);
+    assert.ok(setShot.ballLeftGap >= 0, `set-shot ball should stay inside the court, got ${setShot.ballLeftGap}`);
+  });
+
+  await withPage({ width: 740, height: 360 }, async (page) => {
+    await page.locator("#layupModeButton").click();
+    await page.waitForTimeout(250);
+    const joystick = await page.locator("#layupJoystick").boundingBox();
+    await page.mouse.move(joystick.x + joystick.width / 2, joystick.y + joystick.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(joystick.x + joystick.width / 2 + 34, joystick.y + joystick.height / 2 - 34, { steps: 4 });
+    await page.waitForTimeout(220);
+    await page.mouse.up();
+
+    const layup = await dragBallAndMeasure(page);
+
+    assert.ok(layup.dx < 8, `layup arc should start at ball center x, got ${layup.dx}`);
+    assert.ok(layup.dy < 8, `layup arc should start at ball center y, got ${layup.dy}`);
+    assert.ok(layup.ballLeftGap >= 0, `layup ball should stay inside the court, got ${layup.ballLeftGap}`);
+  });
+}
+
 (async () => {
   await assertHomeHasThreeModes();
   await assertPracticeHoopMoves();
   await assertSetShotUsesDistanceTraining();
   await assertLayupModeUsesJoystickAndCenteredHoop();
+  await assertSlingArcStartsAtVisibleBall();
   console.log("mode structure checks passed");
 })().catch((error) => {
   console.error(error);
