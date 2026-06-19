@@ -322,6 +322,20 @@ button {
   perspective: 520px;
 }
 
+.court.moving-hoop .hoop {
+  animation: practiceHoopPatrol 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes practiceHoopPatrol {
+  0% {
+    left: 34%;
+  }
+
+  100% {
+    left: 66%;
+  }
+}
+
 .sweet-spot {
   position: absolute;
   left: 50%;
@@ -1104,7 +1118,7 @@ button {
 
 .mode-options {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -1198,6 +1212,28 @@ button {
   border: 8px solid #e43f35;
   border-radius: 50%;
   box-shadow: 0 20px 0 rgba(255, 255, 255, 0.55);
+}
+
+.mode-card-layup {
+  background:
+    radial-gradient(circle at 30% 58%, #e87425 0 30px, transparent 32px),
+    radial-gradient(circle at 78% 34%, rgba(255, 255, 255, 0.88) 0 42px, transparent 44px),
+    linear-gradient(145deg, #165f75, #143f6b 54%, #df914a);
+}
+
+.mode-card-layup::after {
+  content: "";
+  position: absolute;
+  left: 58px;
+  top: 70px;
+  width: 56px;
+  height: 102px;
+  border-radius: 28px 28px 18px 18px;
+  background: linear-gradient(180deg, #ffd2a6 0 28px, #1f6f8b 28px 76px, #27364a 76px);
+  box-shadow:
+    56px -14px 0 -22px #e87425,
+    74px 12px 0 -34px rgba(255, 255, 255, 0.88),
+    0 16px 0 rgba(23, 32, 42, 0.12);
 }
 
 .back-button {
@@ -1314,6 +1350,40 @@ button {
   color: #bc2f2f;
 }
 
+.layup-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 42px;
+  z-index: 10;
+  display: none;
+  gap: 14px;
+  transform: translateX(-50%);
+}
+
+.layup-controls.visible {
+  display: flex;
+}
+
+.layup-move-button {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border: 3px solid rgba(255, 255, 255, 0.68);
+  border-radius: 50%;
+  background: rgba(20, 63, 107, 0.92);
+  color: #ffffff;
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 900;
+  box-shadow: 0 10px 18px rgba(23, 32, 42, 0.2);
+  touch-action: none;
+}
+
+.layup-move-button:active {
+  transform: translateY(2px);
+}
+
 .sling-streak-banner {
   position: absolute;
   top: 54px;
@@ -1400,6 +1470,45 @@ button {
   filter: drop-shadow(0 14px 12px rgba(70, 40, 20, 0.24));
 }
 
+.sling-court.distance-near .sling-pad { left: 142px; }
+.sling-court.distance-near .sling-player { left: 148px; }
+.sling-court.distance-near .sling-ball { left: 182px; }
+.sling-court.distance-near .sling-arc { left: 214px; }
+
+.sling-court.distance-mid .sling-pad { left: 76px; }
+.sling-court.distance-mid .sling-player { left: 82px; }
+.sling-court.distance-mid .sling-ball { left: 118px; }
+.sling-court.distance-mid .sling-arc { left: 150px; }
+
+.sling-court.distance-far .sling-pad { left: 28px; }
+.sling-court.distance-far .sling-player { left: 34px; }
+.sling-court.distance-far .sling-ball { left: 70px; }
+.sling-court.distance-far .sling-arc { left: 102px; }
+
+.sling-court.layup-mode .sling-player {
+  left: 72px;
+}
+
+.sling-court.layup-mode .sling-ball {
+  left: 108px;
+}
+
+.sling-court.layup-mode .sling-pad {
+  display: none;
+}
+
+.sling-court.layup-mode.dribbling .sling-ball {
+  animation: dribbleBounce 360ms ease-in-out infinite;
+}
+
+.sling-court.layup-mode.dribbling .player-leg-left {
+  animation: playerStepLeft 360ms ease-in-out infinite;
+}
+
+.sling-court.layup-mode.dribbling .player-leg-right {
+  animation: playerStepRight 360ms ease-in-out infinite;
+}
+
 .player-head {
   position: absolute;
   left: 42px;
@@ -1479,6 +1588,39 @@ button {
 .player-leg-right {
   left: 70px;
   transform: rotate(-14deg);
+}
+
+@keyframes dribbleBounce {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+
+  50% {
+    margin-top: 16px;
+  }
+}
+
+@keyframes playerStepLeft {
+  0%,
+  100% {
+    transform: rotate(12deg);
+  }
+
+  50% {
+    transform: rotate(-8deg) translateY(4px);
+  }
+}
+
+@keyframes playerStepRight {
+  0%,
+  100% {
+    transform: rotate(-14deg);
+  }
+
+  50% {
+    transform: rotate(10deg) translateY(-3px);
+  }
 }
 
 .sling-court.is-dragging .player-arm-front {
@@ -1864,6 +2006,35 @@ button {
     bottom: 82px;
   }
 
+  .sling-court.distance-near .sling-pad { left: 118px; }
+  .sling-court.distance-near .sling-player { left: 124px; }
+  .sling-court.distance-near .sling-ball { left: 158px; }
+  .sling-court.distance-near .sling-arc { left: 188px; }
+
+  .sling-court.distance-mid .sling-pad { left: 58px; }
+  .sling-court.distance-mid .sling-player { left: 64px; }
+  .sling-court.distance-mid .sling-ball { left: 96px; }
+  .sling-court.distance-mid .sling-arc { left: 128px; }
+
+  .sling-court.distance-far .sling-pad { left: 20px; }
+  .sling-court.distance-far .sling-player { left: 26px; }
+  .sling-court.distance-far .sling-ball { left: 60px; }
+  .sling-court.distance-far .sling-arc { left: 94px; }
+
+  .sling-court.layup-mode .sling-player { left: 54px; }
+  .sling-court.layup-mode .sling-ball { left: 86px; }
+
+  .layup-controls {
+    bottom: 32px;
+    gap: 10px;
+  }
+
+  .layup-move-button {
+    width: 48px;
+    height: 48px;
+    font-size: 34px;
+  }
+
   .sling-arc {
     left: 128px;
     bottom: 104px;
@@ -1963,6 +2134,20 @@ button {
     bottom: 68px;
   }
 
+  .sling-court.distance-near .sling-player { left: 108px; }
+  .sling-court.distance-near .sling-ball { left: 140px; }
+  .sling-court.distance-mid .sling-player { left: 58px; }
+  .sling-court.distance-mid .sling-ball { left: 88px; }
+  .sling-court.distance-far .sling-player { left: 24px; }
+  .sling-court.distance-far .sling-ball { left: 56px; }
+
+  .sling-court.layup-mode .sling-player { left: 48px; }
+  .sling-court.layup-mode .sling-ball { left: 80px; }
+
+  .layup-controls {
+    bottom: 26px;
+  }
+
   .sling-arc {
     left: 116px;
     bottom: 88px;
@@ -1976,13 +2161,21 @@ button {
 @media (max-width: 680px) {
   .mode-options {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .mode-card {
-    min-height: 230px;
+    min-height: 186px;
+    padding: 14px;
   }
 
   .mode-card strong {
-    margin-top: 98px;
+    margin-top: 72px;
+    font-size: 26px;
+  }
+
+  .mode-card small {
+    margin-top: 6px;
+    font-size: 13px;
   }
 }
