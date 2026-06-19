@@ -29,6 +29,7 @@ const classic = {
   scoreEl: document.querySelector("#score"),
   timeLeftEl: document.querySelector("#timeLeft"),
   bestStreakEl: document.querySelector("#bestStreak"),
+  chapterBadgeEl: document.querySelector("#classicChapterBadge"),
   shotFeedbackEl: document.querySelector("#shotFeedback"),
   shootButton: document.querySelector("#shootButton"),
   startButton: document.querySelector("#startButton"),
@@ -48,6 +49,7 @@ const sling = {
   scoreEl: document.querySelector("#slingScore"),
   timeLeftEl: document.querySelector("#slingTimeLeft"),
   bestStreakEl: document.querySelector("#slingBestStreak"),
+  chapterBadgeEl: document.querySelector("#slingChapterBadge"),
   feedbackEl: document.querySelector("#slingFeedback"),
   ballEl: document.querySelector("#slingBall"),
   playerEl: document.querySelector("#slingPlayer"),
@@ -95,15 +97,16 @@ function showMode(mode) {
     classic.startButton.textContent = "开始游戏";
     setClassicFeedback("按住篮球");
     updateClassicScoreboard();
-    playLevelIntro(classic, "第 1 关");
+    playLevelIntro(classic, "第一章", "第 1 关");
   }
 
   if (mode === "sling") {
     resetIdleState(sling.state);
     resetSlingUi();
+    sling.courtEl.classList.add("moving-hoop");
     setSlingFeedback("拉住篮球");
     updateSlingScoreboard();
-    playLevelIntro(sling, "第 1 关");
+    playLevelIntro(sling, "第一章", "第 2 关");
   }
 }
 
@@ -142,14 +145,17 @@ function resetLevelIntro(game) {
   game.levelBadgeEl.classList.remove("level-badge-arrived");
 }
 
-function playLevelIntro(game, label) {
+function playLevelIntro(game, chapterLabel, levelLabel) {
   if (!game.levelIntroEl || !game.levelBadgeEl) {
     return;
   }
 
   resetLevelIntro(game);
-  game.levelIntroEl.textContent = label;
-  game.levelBadgeEl.textContent = label;
+  game.levelIntroEl.textContent = `${chapterLabel}\n${levelLabel}`;
+  if (game.chapterBadgeEl) {
+    game.chapterBadgeEl.textContent = chapterLabel;
+  }
+  game.levelBadgeEl.textContent = levelLabel;
   game.levelIntroEl.dataset.state = "showing";
   void game.levelIntroEl.offsetWidth;
 
