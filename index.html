@@ -11,19 +11,24 @@
     <main class="app-shell">
       <section class="mode-select" id="modeSelect" aria-label="选择游戏模式">
         <div class="mode-title">
-          <span>第 1 关</span>
-          <h1>选择投篮方式</h1>
+          <span>第一章</span>
+          <h1>选择训练模式</h1>
         </div>
         <div class="mode-options">
           <button class="mode-card mode-card-classic" id="classicModeButton" type="button">
             <span class="mode-side">左边</span>
-            <strong>第 1 关</strong>
-            <small>第一章：固定篮筐基础投篮</small>
+            <strong>投球练习</strong>
+            <small>篮筐左右移动，练方向和抛物线</small>
           </button>
-          <button class="mode-card mode-card-sling" id="slingModeButton" type="button">
+          <button class="mode-card mode-card-sling" id="setShotModeButton" type="button">
+            <span class="mode-side">中间</span>
+            <strong>定点投球</strong>
+            <small>篮筐固定，距离会变化</small>
+          </button>
+          <button class="mode-card mode-card-layup" id="layupModeButton" type="button">
             <span class="mode-side">右边</span>
-            <strong>第 2 关</strong>
-            <small>第一章：移动篮筐预判投篮</small>
+            <strong>移动上篮</strong>
+            <small>左右移动小人，运球后蓄力投球</small>
           </button>
         </div>
       </section>
@@ -122,7 +127,7 @@
           <button class="back-button sling-back" id="slingBackButton" type="button">返回</button>
           <div class="stage-badge" aria-label="当前章节和关卡">
             <div class="chapter-badge" id="slingChapterBadge">第一章</div>
-            <div class="level-badge" id="slingLevelBadge">第 2 关</div>
+            <div class="level-badge" id="slingLevelBadge">定点投球</div>
           </div>
           <div class="stat">
             <span class="stat-label">得分</span>
@@ -187,6 +192,10 @@
             <div class="sling-score-burst" id="slingScoreBurst">SWISH +2</div>
           </div>
           <div class="sling-power" id="slingPower">向左后方拉</div>
+          <div class="layup-controls" id="layupControls" aria-label="移动上篮控制">
+            <button class="layup-move-button" id="layupLeftButton" type="button" aria-label="向左移动">‹</button>
+            <button class="layup-move-button" id="layupRightButton" type="button" aria-label="向右移动">›</button>
+          </div>
         </section>
       </section>
     </main>
