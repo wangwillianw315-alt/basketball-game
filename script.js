@@ -3,6 +3,8 @@ const LEVEL_TARGET_SCORE = 20;
 const SHOT_DURATION_MS = 640;
 const MIN_DRAG_TO_SHOOT = 18;
 const HOOP_FEEDBACK_MS = 520;
+const LEVEL_INTRO_HOLD_MS = 820;
+const LEVEL_INTRO_MOVE_MS = 430;
 
 const rules = window.shotRules;
 let audioContext = null;
@@ -32,6 +34,9 @@ const classic = {
   startButton: document.querySelector("#startButton"),
   courtEl: document.querySelector("#court"),
   hoopEl: document.querySelector("#hoop"),
+  levelBadgeEl: document.querySelector("#classicLevelBadge"),
+  levelIntroEl: document.querySelector("#classicLevelIntro"),
+  introTimerId: null,
   aimArcEl: document.querySelector("#aimArc"),
   powerFillEl: document.querySelector("#powerFill"),
   powerCoachEl: document.querySelector("#powerCoach"),
@@ -48,6 +53,9 @@ const sling = {
   playerEl: document.querySelector("#slingPlayer"),
   courtEl: document.querySelector("#slingCourt"),
   hoopEl: document.querySelector("#slingHoop"),
+  levelBadgeEl: document.querySelector("#slingLevelBadge"),
+  levelIntroEl: document.querySelector("#slingLevelIntro"),
+  introTimerId: null,
   rimLineEl: document.querySelector("#slingRimLine"),
   netEl: document.querySelector(".sling-net"),
   arcEl: document.querySelector("#slingArc"),
@@ -87,6 +95,7 @@ function showMode(mode) {
     classic.startButton.textContent = "开始游戏";
     setClassicFeedback("按住篮球");
     updateClassicScoreboard();
+    playLevelIntro(classic, "第 1 关");
   }
 
   if (mode === "sling") {
@@ -94,10 +103,12 @@ function showMode(mode) {
     resetSlingUi();
     setSlingFeedback("拉住篮球");
     updateSlingScoreboard();
+    playLevelIntro(sling, "第 1 关");
   }
 }
 
 function stopRound(game) {
+  resetLevelIntro(game);
   window.clearInterval(game.state.timerId);
   game.state.timerId = null;
   game.state.isPlaying = false;
@@ -114,6 +125,64 @@ function resetIdleState(state) {
   state.startY = 0;
   state.dragX = 0;
   state.dragY = 0;
+}
+
+function resetLevelIntro(game) {
+  window.clearTimeout(game.introTimerId);
+  game.introTimerId = null;
+
+  if (!game.levelIntroEl || !game.levelBadgeEl) {
+    return;
+  }
+
+  game.levelIntroEl.dataset.state = "idle";
+  game.levelIntroEl.style.removeProperty("--level-intro-x");
+  game.levelIntroEl.style.removeProperty("--level-intro-y");
+  game.levelIntroEl.style.removeProperty("--level-intro-scale");
+  game.levelBadgeEl.classList.remove("level-badge-arrived");
+}
+
+function playLevelIntro(game, label) {
+  if (!game.levelIntroEl || !game.levelBadgeEl) {
+    return;
+  }
+
+  resetLevelIntro(game);
+  game.levelIntroEl.textContent = label;
+  game.levelBadgeEl.textContent = label;
+  game.levelIntroEl.dataset.state = "showing";
+  void game.levelIntroEl.offsetWidth;
+
+  game.introTimerId = window.setTimeout(() => {
+    const introRect = game.levelIntroEl.getBoundingClientRect();
+    const badgeRect = game.levelBadgeEl.getBoundingClientRect();
+    const introCenterX = introRect.left + introRect.width / 2;
+    const introCenterY = introRect.top + introRect.height / 2;
+    const badgeCenterX = badgeRect.left + badgeRect.width / 2;
+    const badgeCenterY = badgeRect.top + badgeRect.height / 2;
+    const scale = Math.min(
+      badgeRect.width / introRect.width,
+      badgeRect.height / introRect.height,
+      0.58
+    );
+    const targetCenterX = badgeRect.left + (introRect.width * scale) / 2;
+    const targetCenterY = badgeRect.top + (introRect.height * scale) / 2;
+
+    game.levelIntroEl.style.setProperty("--level-intro-x", `${targetCenterX - introCenterX}px`);
+    game.levelIntroEl.style.setProperty("--level-intro-y", `${targetCenterY - introCenterY}px`);
+    game.levelIntroEl.style.setProperty("--level-intro-scale", String(scale));
+    game.levelIntroEl.dataset.state = "settling";
+
+    game.introTimerId = window.setTimeout(() => {
+      game.levelIntroEl.dataset.state = "settled";
+      game.levelBadgeEl.classList.add("level-badge-arrived");
+
+      game.introTimerId = window.setTimeout(() => {
+        game.levelBadgeEl.classList.remove("level-badge-arrived");
+        game.introTimerId = null;
+      }, 620);
+    }, LEVEL_INTRO_MOVE_MS);
+  }, LEVEL_INTRO_HOLD_MS);
 }
 
 function startClassicRound() {
