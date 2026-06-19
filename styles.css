@@ -10,6 +10,7 @@ body {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   color: #17202a;
   background: linear-gradient(180deg, #7ec8e3 0%, #b9ecff 42%, #f4c37d 42%, #d98b43 100%);
@@ -28,6 +29,7 @@ button {
   gap: 14px;
   width: min(100vw, 520px);
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 18px 16px 20px;
 }
@@ -1084,6 +1086,7 @@ button {
 
 .app-shell {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .mode-select {
@@ -1092,6 +1095,7 @@ button {
   gap: 22px;
   width: min(100vw, 920px);
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 22px;
 }
@@ -1957,8 +1961,8 @@ button {
   }
 
   .sling-court {
-    height: calc(100vh - 62px);
-    height: calc(100dvh - 62px);
+    height: calc(100vh - 64px);
+    height: calc(100dvh - 64px);
     min-height: 0;
     border-width: 2px;
   }
@@ -2109,8 +2113,8 @@ button {
   }
 
   .sling-court {
-    height: calc(100vh - 56px);
-    height: calc(100dvh - 56px);
+    height: calc(100vh - 58px);
+    height: calc(100dvh - 58px);
   }
 
   .sling-hoop {
@@ -2177,5 +2181,153 @@ button {
   .mode-card small {
     margin-top: 6px;
     font-size: 13px;
+  }
+
+  .sling-game {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  .sling-hud {
+    grid-template-columns: 52px 76px repeat(3, minmax(48px, 1fr));
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+
+  .sling-back {
+    min-height: 46px;
+    padding: 5px 6px;
+    font-size: 13px;
+  }
+
+  .sling-hud .stage-badge {
+    gap: 2px;
+  }
+
+  .sling-hud .chapter-badge {
+    padding: 2px 3px;
+    font-size: 9px;
+  }
+
+  .sling-hud .level-badge {
+    padding: 5px 3px;
+    font-size: 12px;
+  }
+
+  .sling-hud .stat {
+    padding: 5px 3px;
+  }
+
+  .sling-hud .stat-label {
+    margin-bottom: 2px;
+    font-size: 9px;
+  }
+
+  .sling-hud .stat strong {
+    font-size: 17px;
+  }
+
+  .sling-court {
+    height: calc(100vh - 75px);
+    height: calc(100dvh - 75px);
+    min-height: 0;
+    border-width: 2px;
+  }
+}
+
+@media (max-width: 680px) and (max-height: 760px) {
+  .mode-select {
+    align-content: start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .mode-title span {
+    margin-bottom: 4px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .mode-title h1 {
+    font-size: 27px;
+  }
+
+  .mode-options {
+    gap: 8px;
+  }
+
+  .mode-card {
+    min-height: 142px;
+    padding: 11px;
+    box-shadow: 0 8px 0 rgba(11, 42, 72, 0.24), 0 14px 34px rgba(23, 32, 42, 0.18);
+  }
+
+  .mode-card strong {
+    margin-top: 48px;
+    font-size: 22px;
+  }
+
+  .mode-card small {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.22;
+  }
+
+  .mode-side {
+    min-width: 48px;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .mode-card-classic::after {
+    top: 42px;
+    width: 82px;
+    height: 52px;
+    border-width: 5px;
+    box-shadow: 0 40px 0 -32px #e43f35;
+  }
+
+  .mode-card-sling::after {
+    top: 52px;
+    right: 24px;
+    width: 58px;
+    height: 20px;
+    border-width: 6px;
+  }
+
+  .mode-card-layup::after {
+    top: 46px;
+    left: 44px;
+    width: 44px;
+    height: 76px;
+    border-radius: 22px 22px 14px 14px;
+    box-shadow:
+      42px -12px 0 -18px #e87425,
+      58px 8px 0 -28px rgba(255, 255, 255, 0.88),
+      0 12px 0 rgba(23, 32, 42, 0.12);
+  }
+
+  .game {
+    gap: 8px;
+    padding: 10px 10px 12px;
+  }
+
+  .scoreboard {
+    gap: 6px;
+  }
+
+  .stat {
+    padding: 7px 6px;
+  }
+
+  .stat strong {
+    font-size: 20px;
+  }
+
+  .court {
+    min-height: min(380px, calc(100dvh - 158px));
   }
 }

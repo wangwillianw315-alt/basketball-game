@@ -147,6 +147,42 @@
     return withTrajectory({ made: false, reason: "rim", crossedRim, crossedNet, impactPoint: rimPoint, ...normalized }, samples);
   }
 
+  function coachSlingAim(input, geometry) {
+    const normalized = normalizeSlingDrag(input);
+    const result = judgeSlingTrajectory(input, geometry);
+    const hint = { result };
+
+    if (normalized.pull < MIN_SLING_PULL) {
+      return { text: "力度偏小", tone: "warn", ...hint };
+    }
+
+    if (normalized.pull > MAX_SLING_MAKE_PULL) {
+      if (result.reason === "rim" || result.crossedRim || result.crossedNet) {
+        return { text: "角度接近，少用力", tone: "warn", ...hint };
+      }
+
+      return { text: "力度太大", tone: "warn", ...hint };
+    }
+
+    if (result.made) {
+      return { text: "角度刚好", tone: "good", ...hint };
+    }
+
+    if (result.reason === "rim" || result.crossedRim || result.crossedNet) {
+      return { text: "角度接近", tone: "good", ...hint };
+    }
+
+    if (result.reason === "high") {
+      return { text: "弧线稍高", tone: "warn", ...hint };
+    }
+
+    if (result.reason === "low") {
+      return { text: "弧线稍低", tone: "warn", ...hint };
+    }
+
+    return { text: "力度偏小", tone: "warn", ...hint };
+  }
+
   function pointAtX(input, geometry, x) {
     const endPoint = calculateSlingPoint(input, geometry, 1);
     const t = clamp(x / Math.max(endPoint.x, 1), 0, 1);
@@ -170,6 +206,7 @@
     normalizeSlingDrag,
     judgeSlingShot,
     calculateSlingPoint,
-    judgeSlingTrajectory
+    judgeSlingTrajectory,
+    coachSlingAim
   };
 });

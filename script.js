@@ -574,7 +574,7 @@ function updateSlingAimingUi() {
     dot.style.opacity = String(alpha);
   });
   setSlingFeedback(`蓄力 ${powerPercent}%`);
-  updateSlingPowerCoach(normalized);
+  updateSlingPowerCoach({ dragX: sling.state.dragX, dragY: sling.state.dragY }, geometry);
 }
 
 function shootSlingBall() {
@@ -705,28 +705,9 @@ function updateClassicPowerCoach(power) {
   setPowerCoach(classic.powerCoachEl, "力度刚好", "good");
 }
 
-function updateSlingPowerCoach(normalized) {
-  if (normalized.pull < 0.46) {
-    setPowerCoach(sling.powerEl, "力度偏小", "warn");
-    return;
-  }
-
-  if (normalized.pull > 0.88) {
-    setPowerCoach(sling.powerEl, "力度太大", "warn");
-    return;
-  }
-
-  if (normalized.arc < -0.5) {
-    setPowerCoach(sling.powerEl, "弧线太高", "warn");
-    return;
-  }
-
-  if (normalized.arc > 0.5) {
-    setPowerCoach(sling.powerEl, "弧线太低", "warn");
-    return;
-  }
-
-  setPowerCoach(sling.powerEl, "角度刚好", "good");
+function updateSlingPowerCoach(input, geometry) {
+  const hint = rules.coachSlingAim(input, geometry);
+  setPowerCoach(sling.powerEl, hint.text, hint.tone);
 }
 
 function getSlingGeometry() {
